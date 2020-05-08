@@ -17,6 +17,7 @@ public:
     Dinosaurs(std::string name, std::string gender, std::string era, 
               std::string order, std::string species, std::string food);
     Dinosaurs& operator=(const Dinosaurs& other);
+    bool operator==(const Dinosaurs& other)const;
 
     std::string getName() const;
     std::string getGender() const;

@@ -28,6 +28,12 @@ Dinosaurs& Dinosaurs::operator=(const Dinosaurs& other)
 	return *this;
 }
 
+bool Dinosaurs::operator==(const Dinosaurs& other)const
+{
+	return (this->name == other.name && this->gender == other.gender && this->era == other.era && 
+		    this->order == other.order && this->species == other.species && this->food == other.food);
+}
+
 std::string Dinosaurs::getName()const
 {
 	return this->name;
@@ -84,19 +90,19 @@ void Dinosaurs::createAnimal(std::istream& in)
 
 	std::string gender;
 	do {
-		std::cout << "Gender:";
+		std::cout << "Gender(female/male):";
 		in >> gender;
 	} while (!isCorrectGender(gender));
 
 	std::string era;
 	do {
-		std::cout << "Era:";
+		std::cout << "Era(Triassic/Cretaceous/Jura):";
 		in >> era;
 	} while (!isCorrectEra(era));
 
 	std::string order;
 	do {
-		std::cout << "Order:";
+		std::cout << "Order(herbivorous/carnivorous/flying/aqueous):";
 		in >> order;
 	} while (!isCorrectOrder(order));
 
@@ -155,7 +161,6 @@ void Dinosaurs::createAnimal(std::istream& in)
 		//this->food = food;
 	}
 }
-
 
 void Dinosaurs::print()const
 {

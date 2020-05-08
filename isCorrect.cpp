@@ -62,6 +62,23 @@ bool isCorrectClimate(std::string climate)
 		|| climate.compare("water") == 0);
 }
 
+bool isCorrectCageEmployee(const Cage& other)
+{
+	if (other.getAnimals().size() == 0)
+	{
+		return other.getCountEmp() == 0;
+	}
+	else if (other.getAnimals().size() == 1)
+	{
+		return other.getCountEmp() == 2;
+	}
+	else if (other.getAnimals().size() >= 2 && other.getAnimals().size() <= 10)
+	{
+		return (other.getCountEmp() == other.getAnimals().size() + 2);
+	}
+	else return false;
+}
+
 bool isCorrectCageAnimal(const Cage& other, std::vector<Dinosaurs>animals)
 {
 	if (other.getSize() == "small")
@@ -79,19 +96,29 @@ bool isCorrectCageAnimal(const Cage& other, std::vector<Dinosaurs>animals)
 	else return false;
 }
 
-bool isCorrectClimateAnimal(const Cage& other, const Dinosaurs& animal)
+bool isCorrectClimateAnimal(const std::string& climate, const Dinosaurs& animal)
 {
-	if (other.getClimate() == "dry")
+	if (climate == "dry")
 	{
 		return (animal.getSpecies() == "Brontosaurus" || animal.getSpecies() == "Tyrannosaur");
 	}
-	else if (other.getClimate() == "air")
+	else if (climate == "air")
 	{
 		return (animal.getSpecies() == "Pterosaur");
 	}
-	else if (other.getClimate() == "water")
+	else if (climate == "water")
 	{
 		return (animal.getSpecies() == "Plesiosaur");
 	}
 	else return false;
+}
+
+bool isCorrectData(size_t number, std::vector<size_t>helper)//в мейн, за избиране на правилна клетка
+{
+	bool flag = false;
+	for (size_t i = 0; i < helper.size(); i++)
+	{
+		if (helper[i] == (number - 1)) flag = true;//number е номера на клетката
+	}
+	return flag;
 }
