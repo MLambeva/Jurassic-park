@@ -1,68 +1,110 @@
 #include"isCorrect.h"
 
+bool isCorrect::isLetter(char x)
+{
+	return x >= 'a' && x <= 'z';
+}
 
-bool isCorrectName(std::string name)
+bool isCorrect::isCorrectStaffName(std::string name)
+{
+	size_t index;
+	size_t br = 0;
+	bool flag1 = true;
+	for (size_t i = 0; i < name.size(); i++)
+	{
+		if (name[i] == ' ')
+		{
+			br++;
+			index = i;
+		}
+	}
+	if (br == 1 && name[0] >= 'A' && name[0] <= 'Z' && name[index + 1] >= 'A' && name[index + 1] <= 'Z')
+	{
+		for (size_t i = 1; i < index; i++)
+		{
+			if (!isLetter(name[i]))
+			{
+				flag1 = false;
+			}
+		}
+		if (flag1 == true)
+		{
+			for (size_t i = index + 2; i < name.size(); i++)
+			{
+				if (!isLetter(name[i]))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	return false;
+}
+
+bool isCorrect::isCorrectName(std::string name)
 {
 	bool flag = true;
-	if (name.front() >= 'A' && name.front() <= 'Z')
+	if (name[0] >= 'A' && name[0] <= 'Z')
 	{
 		for (size_t i = 1; i < name.size(); i++)
 		{
-			if (name[i] >= 'a' && name[i] <= 'z') flag = true;
-			else flag = false; break;
+			if (isLetter(name[i])) flag = true;
+			else { flag = false; break; }
 		}
 		return flag;
 	}
 	else return false;
 }
 
-bool isCorrectGender(std::string gender)
+bool isCorrect::isCorrectGender(std::string gender)
 {
 	return (gender.compare("male") == 0 || gender.compare("female") == 0);
 }
 
-bool isCorrectEra(std::string era)
+bool isCorrect::isCorrectEra(std::string era)
 {
 	return (era.compare("Triassic") == 0 || era.compare("Cretaceous") == 0 || era.compare("Jura") == 0);
 }
 
-bool isCorrectOrder(std::string order)
+bool isCorrect::isCorrectOrder(std::string order)
 {
 	return (order.compare("herbivorous") == 0 || order.compare("carnivorous") == 0 || 
 		    order.compare("flying") == 0 || order.compare("aqueous") == 0);
 }
 
-bool isCorrectSpecies(std::string species)
+bool isCorrect::isCorrectSpecies(std::string species)
 {
 	return (species.compare("Plesiosaur") == 0 || species.compare("Brontosaurus") == 0 
 		    || species.compare("Tyrannosaur") == 0 || species.compare("Pterosaur") ==0);
 }
 
-bool isCorrectFood(std::string food)
+bool isCorrect::isCorrectFood(std::string food)
 {
 	return (food.compare("grass") == 0 || food.compare("meat") == 0 || food.compare("fish") == 0);
 }
 
 
-bool isCorrectAnimal(const Dinosaurs& other)
+bool isCorrect::isCorrectAnimal(const Dinosaurs& other)
 {
 	return isCorrectName(other.getName()) && isCorrectGender(other.getGender()) && isCorrectEra(other.getEra())
 		&& isCorrectOrder(other.getOrder()) && isCorrectSpecies(other.getSpecies()) && isCorrectFood(other.getFood());
 }
 
 
-bool isCorrectSize(std::string size)
+bool isCorrect::isCorrectSize(std::string size)
 {
 	return (size.compare("small") == 0 || size.compare("medium") == 0 || size.compare("large") == 0);
 }
 
-bool isCorrectClimate(std::string climate)
+bool isCorrect::isCorrectClimate(std::string climate)
 {
 	return (climate.compare("dry") == 0 || climate.compare("air") == 0
 		|| climate.compare("water") == 0);
 }
 
-bool isCorrectCageEmployee(const Cage& other)
+bool isCorrect::isCorrectCageEmployee(const Cage& other)
 {
 	if (other.getAnimals().size() == 0)
 	{
@@ -79,7 +121,7 @@ bool isCorrectCageEmployee(const Cage& other)
 	else return false;
 }
 
-bool isCorrectCageAnimal(const Cage& other, std::vector<Dinosaurs>animals)
+bool isCorrect::isCorrectCageAnimal(const Cage& other, std::vector<Dinosaurs>animals)
 {
 	if (other.getSize() == "small")
 	{
@@ -96,7 +138,7 @@ bool isCorrectCageAnimal(const Cage& other, std::vector<Dinosaurs>animals)
 	else return false;
 }
 
-bool isCorrectClimateAnimal(const std::string& climate, const Dinosaurs& animal)
+bool isCorrect::isCorrectClimateAnimal(const std::string& climate, const Dinosaurs& animal)
 {
 	if (climate == "dry")
 	{
@@ -113,7 +155,7 @@ bool isCorrectClimateAnimal(const std::string& climate, const Dinosaurs& animal)
 	else return false;
 }
 
-bool isCorrectData(size_t number, std::vector<size_t>helper)//в мейн, за избиране на правилна клетка
+bool isCorrect::isCorrectData(size_t number, std::vector<size_t>helper)//в мейн, за избиране на правилна клетка
 {
 	bool flag = false;
 	for (size_t i = 0; i < helper.size(); i++)

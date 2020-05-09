@@ -4,14 +4,54 @@
 #include"Warehouse.h"
 #include"Staff.h"
 
+void storeInBin(std::vector<Cage> c, Warehouse& w)
+{
+	std::ofstream outputFile("JurassicPark.bin", std::ios::out | std::ios::binary);
+	if (!outputFile.is_open())
+	{
+		std::cout << "Error! The file cannot be opened!\n";
+		return;
+	}
+	for (size_t i = 0; i < c.size(); i++)
+	{
+		c[i].write(outputFile);
+	}
+	w.write(outputFile);
+
+	outputFile.close();
+}
+
+void readFromBin(std::vector<Cage>& c, Warehouse& w)
+{
+	std::ifstream inputFile("JurassicPark.bin", std::ios::in | std::ios::binary | std::ios::ate);
+	if (!inputFile.is_open())
+	{
+		std::cout << "Error! The file cannot be opened!\n";
+		return;
+	}
+	std::streampos len = inputFile.tellg() - (std::streampos)12;
+	inputFile.seekg(0, std::ios::beg);
+	while (inputFile.tellg() != len)
+	{
+		Cage newCage;
+		newCage.read(inputFile);
+		c.push_back(newCage);
+	}
+	w.read(inputFile);
+
+	inputFile.close();
+}
+
 int main()
 {
 	Warehouse warehouse(300, 300, 300);
-	Cage first("small", "dry", 0);
-	Cage second("medium", "water", 0);
-	Cage third("large", "air", 0);
-	std::vector<Cage> cages = { first, second, third };
-	
+	//Cage first("small", "dry", 0);
+	//Cage second("medium", "water", 0);
+	//Cage third("large", "air", 0);
+	//std::vector<Cage> cages1 = { first, second, third};
+	std::vector<Cage> cages = { };
+	//storeInBin(cages1, warehouse);
+	readFromBin(cages, warehouse);
 	
 	std::vector<size_t> saveRightCage = { };
 	std::vector<Dinosaurs> dinosaurs = { };
@@ -20,19 +60,20 @@ int main()
 	Cage saverCage;
 	size_t action;
 	do
-	{		
+	{
 		saveRightCage.clear();
-		std::cout << "\nWhat do you want to do?\n" 
-			      << "1)Accept new animal.\n"
-			      << "2)Build new cage.\n"
-			      << "3)Remove available animal.\n"
-			      << "4)Feed dinosaurs.\n"
-			      << "5)Load the warehouse with food.\n"
-			      << "6)Finalize your Jurassic Park!\n";
-		
+		std::cout << "\nWhat do you want to do?\n"
+			<< "1)Accept new animal.\n"
+			<< "2)Build new cage.\n"
+			<< "3)Remove available animal.\n"
+			<< "4)Feed dinosaurs.\n"
+			<< "5)Load the warehouse with food.\n"
+			<< "6)Finalize your Jurassic Park!\n";
+
 		do {
 			std::cout << "->";
 			std::cin >> action;
+			std::cin.ignore();
 		} while (!(action >= 1 && action <= 6));
 
 		if (action == 1)//1)Accept new animal.
@@ -42,9 +83,9 @@ int main()
 			dinosaurs.push_back(saverDino);
 			for (size_t i = 0; i < cages.size(); i++)
 			{
-				if (isCorrectCageAnimal(cages[i], cages[i].getAnimals()) && isCorrectClimateAnimal(cages[i].getClimate(), saverDino))
+				if (isCorrect::isCorrectCageAnimal(cages[i], cages[i].getAnimals()) && isCorrect::isCorrectClimateAnimal(cages[i].getClimate(), saverDino))
 				{
-					if (cages[i].getAnimals().size() != 0 )
+					if (cages[i].getAnimals().size() != 0)
 					{
 						if (cages[i].getAnimals()[0].getOrder() == saverDino.getOrder()
 							&& cages[i].getAnimals()[0].getEra() == saverDino.getEra())
@@ -73,27 +114,28 @@ int main()
 				do {
 					std::cout << "Please choose a cage`number where you want to put the dinosaur:\n-> ";
 					std::cin >> number;
-				} while (!isCorrectData(number, saveRightCage));
+					std::cin.ignore();
+				} while (!isCorrect::isCorrectData(number, saveRightCage));
 				cages[number - 1].setAnimal(saverDino);
-				do{
+				do {
 					Employee helper;
-				    helper.appointment(std::cin, cages[number - 1]);//1ж. - 2 човека, 2ж. - 4 човека, 3ж. - 5 човека
-					cages[number - 1].setCountEmp(cages[number-1].getCountEmp() + 1) ;
-				    staff.push_back(helper);
-				} while (!isCorrectCageEmployee(cages[number - 1]));
+					helper.appointment(std::cin, cages[number - 1]);//1ж. - 2 човека, 2ж. - 4 човека, 3ж. - 5 човека
+					cages[number - 1].setCountEmp(cages[number - 1].getCountEmp() + 1);
+					staff.push_back(helper);
+				} while (!isCorrect::isCorrectCageEmployee(cages[number - 1]));
 			}
 			else
 			{
 				std::cout << "You should build new cage!\n";
-			    saverCage.buildCageForExistedAnimal(std::cin, saverDino);
-			    cages.push_back(saverCage);
-			    cages.back().setAnimal(saverDino);				
+				saverCage.buildCageForExistedAnimal(std::cin, saverDino);
+				cages.push_back(saverCage);
+				cages.back().setAnimal(saverDino);
 				do {
 					Employee helper;
 					helper.appointment(std::cin, cages.back());//1ж. - 2 човека, 2ж. - 4 човека, 3ж. - 5 човека
 					cages.back().setCountEmp(cages.back().getCountEmp() + 1);
 					staff.push_back(helper);
-				} while (!isCorrectCageEmployee(cages.back()));
+				} while (!isCorrect::isCorrectCageEmployee(cages.back()));
 			}
 		}
 		else if (action == 2)//2)Build new cage.
@@ -120,14 +162,15 @@ int main()
 				do {
 					std::cout << "->";
 					std::cin >> k;
+					std::cin.ignore();
 				} while (!(k >= 1 && k <= dinosaurs.size()));
 				for (size_t i = 0; i < cages.size(); i++)
 				{
 					for (size_t j = 0; j < cages[i].getAnimals().size(); j++)
 					{
-						if (dinosaurs[k-1] == cages[i].getAnimals()[j])
+						if (dinosaurs[k - 1] == cages[i].getAnimals()[j])
 						{
-							cages[i].removeAnimalFromCage(j+1); break;
+							cages[i].removeAnimalFromCage(j + 1); break;
 						}
 					}
 				}
@@ -205,8 +248,8 @@ int main()
 		{
 			warehouse.loadWarehouse();
 			std::cout << "In the warehouse there are " << warehouse.getQuantityGrass() << "kg grass, "
-				                                       << warehouse.getQuantityMeat() << "kg meat, "
-				                                       << warehouse.getQuantityFish() << "kg fish.\n";
+				<< warehouse.getQuantityMeat() << "kg meat, "
+				<< warehouse.getQuantityFish() << "kg fish.\n";
 		}
 
 	} while (action != 6);
@@ -214,9 +257,11 @@ int main()
 	{
 		for (size_t i = 0; i < cages.size(); i++)
 		{
-			std::cout << "Cage:" << i+1 << "--->" << cages[i];
+			std::cout << "Cage:" << i + 1 << "--->" << cages[i];
 		}
+		std::cout << "\nWarehouse: " << warehouse;
+		storeInBin(cages, warehouse);
 	}
-
+	
 	return 0;
 }

@@ -68,3 +68,23 @@ void Warehouse::loadWarehouse()
 	(*this).loadWarehouseWithMeat();
 	(*this).loadWarehouseWithFish();
 }
+
+std::ostream& operator<<(std::ostream& out, const Warehouse& other)
+{
+	out << other.quantityGrass << " " << other.quantityMeat << " " << other.quantityFish << '\n';
+	return out;
+}
+
+void Warehouse::write(std::ofstream& out)
+{
+	out.write((char*)(&this->quantityGrass), sizeof(int));
+	out.write((char*)(&this->quantityMeat), sizeof(int));
+	out.write((char*)(&this->quantityFish), sizeof(int));
+}
+
+void Warehouse::read(std::ifstream& in)
+{
+	in.read((char*)(&this->quantityGrass), sizeof(this->quantityGrass));
+	in.read((char*)(&this->quantityMeat), sizeof(this->quantityMeat));
+	in.read((char*)(&this->quantityFish), sizeof(this->quantityFish));
+}

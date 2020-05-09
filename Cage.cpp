@@ -3,11 +3,11 @@
 #include"isCorrect.h"
 #include<cassert>
 
-Cage::Cage(const std::string& size, const std::string& climate, size_t countEmp)
+Cage::Cage(const std::string& size, const std::string& climate, int countEmp)
 {
-	assert(isCorrectSize(size));
+	assert(isCorrect::isCorrectSize(size));//static
 	this->size = size;
-	assert(isCorrectClimate(climate));
+	assert(isCorrect::isCorrectClimate(climate));
 	this->climate = climate;
 
 	this->countEmp = countEmp;
@@ -72,11 +72,12 @@ void Cage::setCountEmp(const size_t& countEmp)
 
 std::ostream& operator << (std::ostream& out, const Cage& other)
 {
-	out << other.size << " " << other.climate << " " << other.era << " Employee:" << other.countEmp << '\n';
+	out << "Size: " << other.size << "; Climate: " << other.climate << "; Employee:" << other.countEmp << " " << other.era << '\n';
 	for (size_t i = 0; i < other.animals.size(); i++)
 	{
 		out << "Animal " << i+1 << ")" << other.animals[i] ;
 	}
+	std::cout << '\n';
 	
 	return out;
 }
@@ -86,14 +87,14 @@ void Cage::buildCageForExistedAnimal(std::istream& in, const Dinosaurs& animal)/
 	std::string size;
 	do {
 		std::cout << "Size(small/medium/large):";
-		in >> size;
-	} while (!isCorrectSize(size));
+		std::getline(in, size);
+	} while (!isCorrect::isCorrectSize(size));
 
 	std::string climate;
 	do {
 		std::cout << "Climate(dry/air/water):";
-		in >> climate;
-	} while (!(isCorrectClimate(climate) && isCorrectClimateAnimal(climate, animal)));
+		std::getline(in, climate);
+	} while (!(isCorrect::isCorrectClimate(climate) && isCorrect::isCorrectClimateAnimal(climate, animal)));
 
 	if (in)
 	{
@@ -110,14 +111,14 @@ void Cage::buildCage(std::istream& in)
 	std::string size;
 	do {
 		std::cout << "Size(small/medium/large):";
-		in >> size;
-	} while (!isCorrectSize(size));
+		std::getline(in, size);
+	} while (!isCorrect::isCorrectSize(size));
 	
 	std::string climate;
 	do {
 		std::cout << "Climate(dry/air/water):";
-		in >> climate;
-	} while (!isCorrectClimate(climate));
+		std::getline(in, climate);
+	} while (!isCorrect::isCorrectClimate(climate));
 	
 	if (in)
 	{
@@ -140,4 +141,58 @@ void Cage::removeAnimalFromCage(size_t index)
 		this->countEmp--;
 	}
 	this->animals.erase(this->animals.begin() + (index - 1));
+}
+
+void Cage::write(std::ofstream& out)
+{
+	int sizeSize = this->size.size();
+	out.write((char*)(&sizeSize), sizeof(sizeSize));
+	out.write(this->size.c_str(), sizeof(char) * sizeSize);
+	int climateSize = this->climate.size();
+	out.write((char*)(&climateSize), sizeof(climateSize));
+	out.write(this->climate.c_str(), sizeof(char) * climateSize);
+	out.write((char*)(&this->countEmp), sizeof(this->countEmp));
+	int eraSize = this->era.size();
+	out.write((char*)(&eraSize), sizeof(eraSize));
+	out.write(era.c_str(), sizeof(char) * eraSize);
+	int animalsSize = this->animals.size();
+	out.write((char*)(&animalsSize), sizeof(animalsSize));
+	for (int i = 0; i < animalsSize; i++)
+	{
+		animals[i].write(out);
+	}
+}
+
+void Cage::read(std::ifstream& in)
+{
+	int sizeSize;
+	in.read((char*)(&sizeSize), sizeof(sizeSize));
+	char* size = new char[sizeSize + 1];
+	in.read(size, sizeof(char) * sizeSize);
+	size[sizeSize] = '\0';
+	this->size = size;
+	delete[] size;
+	int climateSize;
+	in.read((char*)(&climateSize), sizeof(climateSize));
+	char* climate = new char[climateSize + 1];
+	in.read(climate, sizeof(char) * climateSize);
+	climate[climateSize] = '\0';
+	this->climate = climate;
+	delete[] climate;
+	in.read((char*)(&this->countEmp), sizeof(this->countEmp));
+	int eraSize;
+	in.read((char*)(&eraSize), sizeof(eraSize));
+	char* era = new char[eraSize + 1];
+	era[eraSize] = '\0';
+	this->era = era;
+	delete[] era;
+	int animalsSize;
+	in.read((char*)(&animalsSize), sizeof(animalsSize));
+	
+	for (int i = 0; i < animalsSize; i++)
+	{
+		Dinosaurs reader;
+		reader.read(in);
+		animals.push_back(reader);
+	}
 }

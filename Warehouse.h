@@ -1,6 +1,7 @@
 #ifndef WAREHOUSE_H
 #define WAREHOUSE_H
 #include<string>
+#include<fstream>
 
 class Warehouse
 {
@@ -24,6 +25,10 @@ public:
 	void loadWarehouseWithFish();
 	void loadWarehouse();
 
+	friend std::ostream& operator<<(std::ostream& out, const Warehouse& other);
+
+	void write(std::ofstream& out);
+	void read(std::ifstream& in);
 };
 
 

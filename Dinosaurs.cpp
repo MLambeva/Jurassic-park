@@ -5,8 +5,8 @@
 Dinosaurs::Dinosaurs(std::string name, std::string gender, std::string era, 
                      std::string order, std::string species, std::string food)
 {
-	assert(isCorrectName(name) && isCorrectGender(gender) && isCorrectEra(era) && isCorrectOrder(order)
-		&& isCorrectSpecies(species) && isCorrectFood(food));
+	assert(isCorrect::isCorrectName(name) && isCorrect::isCorrectGender(gender) && isCorrect::isCorrectEra(era) 
+		&& isCorrect::isCorrectOrder(order) && isCorrect::isCorrectSpecies(species) && isCorrect::isCorrectFood(food));
 
 	this->name = name;
 	this->gender = gender;
@@ -15,18 +15,6 @@ Dinosaurs::Dinosaurs(std::string name, std::string gender, std::string era,
 	this->species = species;
 	this->food = food;
 } 
-
-Dinosaurs& Dinosaurs::operator=(const Dinosaurs& other)
-{
-	this->name = other.name;
-	this->gender = other.gender;
-	this->era = other.era;
-	this->order = other.order;
-	this->species = other.species;
-	this->food = other.food;
-
-	return *this;
-}
 
 bool Dinosaurs::operator==(const Dinosaurs& other)const
 {
@@ -66,18 +54,12 @@ std::string Dinosaurs::getFood()const
 
 std::ostream& operator<<(std::ostream& out, const Dinosaurs& other)
 {
-	assert(isCorrectAnimal(other));
+	assert(isCorrect::isCorrectAnimal(other));
+	//Проверява дали е коректно зададено животното, т.е. дали е с правилно име, пол, ера, разред, вид и храна
+	//Ако е правилно, то извежда информация на 
 	out << other.name << " " << other.gender << " " << other.era
-		<< " " << other.order << " " << other.species << " " << other.food << '\n';
+		<< " " << other.order << " " << other.species << " " << other.food ;
 	return out;
-}
-
-std::istream& operator >> (std::istream& in, Dinosaurs& other)
-{
-	in >> other.name >> other.gender >> other.era >>  other.order >> other.species >> other.food;
-	assert(isCorrectAnimal(other));
-	
-	return in;
 }
 
 void Dinosaurs::createAnimal(std::istream& in)
@@ -85,43 +67,26 @@ void Dinosaurs::createAnimal(std::istream& in)
 	std::string name;
 	do {
 		std::cout << "Name:";
-		in >> name;
-	} while (!isCorrectName(name));
+		std::getline(in, name);
+	} while (!isCorrect::isCorrectName(name));//1 име, започващо с главна латинска буква, последвано от малки латински букви
 
 	std::string gender;
 	do {
 		std::cout << "Gender(female/male):";
-		in >> gender;
-	} while (!isCorrectGender(gender));
+		std::getline(in, gender);
+	} while (!isCorrect::isCorrectGender(gender));//female/male
 
 	std::string era;
 	do {
 		std::cout << "Era(Triassic/Cretaceous/Jura):";
-		in >> era;
-	} while (!isCorrectEra(era));
+		std::getline(in, era);
+	} while (!isCorrect::isCorrectEra(era));//Triassic/Cretaceous/Jura !Първа буква - главна!
 
 	std::string order;
 	do {
 		std::cout << "Order(herbivorous/carnivorous/flying/aqueous):";
-		in >> order;
-	} while (!isCorrectOrder(order));
-
-	//std::string species;
-	//do {
-	//	std::cout << "Species:";
-	//	in >> species;
-	//} while (!isCorrectSpecies(species));
-	//
-	//std::string food;
-	//std::string correctFood;
-	//if (order == "herbivorous") correctFood = "grass";
-	//else if (order == "carnivorous") correctFood = "meat";
-	//else if (order == "flying") correctFood = "meat";
-	//else if (order == "aqueous") correctFood = "fish";
-	//do {
-	//	std::cout << "Food:";
-	//	in >> food;
-	//} while (!(isCorrectFood(food) && (correctFood == food)));
+		std::getline(in, order);
+	} while (!isCorrect::isCorrectOrder(order));//herbivorous/carnivorous/flying/aqueous
 
 	if (in)
 	{
@@ -129,46 +94,113 @@ void Dinosaurs::createAnimal(std::istream& in)
 		this->gender = gender;
 		this->era = era;
 		this->order = order;
-		if (this->order == "herbivorous")
+		if (this->order == "herbivorous")//Ако е тревопасно, то видът му е Бронтозавър, а храната - трева.
 		{
 			this->species = "Brontosaurus";
 			std::cout << "species:Brontosaurus\n";
 			this->food = "grass";
 			std::cout << "food:grass\n";
 		}
-		else if (this->order == "carnivorous")
+		else if (this->order == "carnivorous")//Ако е месоядно, то видът му е Тиранозавър, а храната - месо
 		{
 			this->species = "Tyrannosaur";
 			std::cout << "species:Tyrannosaur\n";
 			this->food = "meat";
 			std::cout << "food:meat\n";
 		}
-		else if (this->order == "flying")
+		else if (this->order == "flying")//Ако е летящо, то видът му е Птицозавър, а храната - месо
 		{
 			this->species = "Pterosaur";
 			std::cout << "species:Pterosaur\n";
 			this->food = "meat";
 			std::cout << "food:meat\n";
 		}
-		else if (this->order == "aqueous")
+		else if (this->order == "aqueous")//Ако е водно, то видът му е Плезиозавър, а храната - риба
 		{
 			this->species = "Plesiosaur";
 			std::cout << "species:Plesiosaur\n";
 			this->food = "fish";
 			std::cout << "food:fish\n";
 		}
-		//this->species = species;
-		//this->food = food;
 	}
 }
 
-void Dinosaurs::print()const
+void Dinosaurs::write(std::ofstream& out)//Записване в бинарен файл
 {
-	assert(isCorrectAnimal(*this));
-	//assert(isCorrectName(this->name) && isCorrectGender(this->gender) && isCorrectEra(this->era)
-	//	&& isCorrectOrder(this->order) && isCorrectSpecies(this->species) && isCorrectFood(this->food));
-	std::cout << this->name << " " << this->gender << " " << this->era
-		<< " " << this->order << " " << this->species << " " << this->food;
+	/*Понеже всички член данни от класа Динозаври са стрингове, то начинът по който записваме е еднакъв, т.е.
+	1)В новосъздадена променлива запазваме размера на стринга.
+	2)Записваме във файла размера.
+	3)Записваме информацията от самия стринг.
+	*/
+	int nameSize = this->name.size();
+	out.write((char*)(&nameSize), sizeof(nameSize));
+	out.write(this->name.c_str(), sizeof(char) * nameSize);
+	int genderSize = this->gender.size();
+	out.write((char*)(&genderSize), sizeof(genderSize));
+	out.write(this->gender.c_str(), sizeof(char) * genderSize);
+	int eraSize = this->era.size();
+	out.write((char*)(&eraSize), sizeof(eraSize));
+	out.write(this->era.c_str(), sizeof(char) * eraSize);
+	int orderSize = this->order.size();
+	out.write((char*)(&orderSize), sizeof(orderSize));
+	out.write(this->order.c_str(), sizeof(char) * orderSize);
+	int speciesSize = this->species.size();
+	out.write((char*)(&speciesSize), sizeof(speciesSize));
+	out.write(this->species.c_str(), sizeof(char) * speciesSize);
+	int foodSize = this->food.size();
+	out.write((char*)(&foodSize), sizeof(foodSize));
+	out.write(this->food.c_str(), sizeof(char) * foodSize);
 }
 
+void Dinosaurs::read(std::ifstream& in)//Четене от бинарен файл
+{
+	/*Понеже всички член данни от класа Динозаври са стрингове, то начинът по който четем е еднакъв, т.е.
+	1)Прочитаме дължината на стринга.
+	2)Заделяме динамично памет, като имаме предвид да има място и за затапващия символ.
+	3)Присвояваме стойността на динамично заделената променлива на стринга.
+	4)Освобождаваме заделената памет.
+	*/
+	int nameSize;
+	in.read((char*)(&nameSize), sizeof(nameSize));
+	char* name = new char[nameSize + 1];
+	in.read(name, sizeof(char) * nameSize);
+	name[nameSize] = '\0';
+	this->name = name;
+	delete[] name;
+	int genderSize;
+	in.read((char*)(&genderSize), sizeof(genderSize));
+	char* gender = new char[genderSize + 1];
+	in.read(gender, sizeof(char) * genderSize);
+	gender[genderSize] = '\0';
+	this->gender = gender;
+	delete[] gender;
+	int eraSize;
+	in.read((char*)(&eraSize), sizeof(eraSize));
+	char* era = new char[eraSize + 1];
+	in.read(era, sizeof(char) * eraSize);
+	era[eraSize] = '\0';
+	this->era = era;
+	delete[]era;
+	int orderSize;
+	in.read((char*)(&orderSize), sizeof(orderSize));
+	char* order = new char[orderSize + 1];
+	in.read(order, sizeof(char) * orderSize);
+	order[orderSize] = '\0';
+	this->order = order;
+	delete[] order;
+	int speciesSize;
+	in.read((char*)(&speciesSize), sizeof(speciesSize));
+	char* species = new char[speciesSize + 1];
+	in.read(species, sizeof(char) * speciesSize);
+	species[speciesSize] = '\0';
+	this->species = species;
+	delete[] species;
+	int foodSize;
+	in.read((char*)(&foodSize), sizeof(foodSize));
+	char* food = new char[foodSize + 1];
+	in.read(food, sizeof(char) * foodSize);
+	food[foodSize] = '\0';
+	this->food = food;
+	delete[] food;
+}
 
