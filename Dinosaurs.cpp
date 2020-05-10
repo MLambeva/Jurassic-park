@@ -1,25 +1,18 @@
+#include<iostream>
+#include<fstream>
+#include<cassert>
 #include"Dinosaurs.h"
 #include"isCorrect.h"
-#include<cassert>
-
-Dinosaurs::Dinosaurs(std::string name, std::string gender, std::string era, 
-                     std::string order, std::string species, std::string food)
-{
-	assert(isCorrect::isCorrectName(name) && isCorrect::isCorrectGender(gender) && isCorrect::isCorrectEra(era) 
-		&& isCorrect::isCorrectOrder(order) && isCorrect::isCorrectSpecies(species) && isCorrect::isCorrectFood(food));
-
-	this->name = name;
-	this->gender = gender;
-	this->era = era;
-	this->order = order;
-	this->species = species;
-	this->food = food;
-} 
 
 bool Dinosaurs::operator==(const Dinosaurs& other)const
 {
 	return (this->name == other.name && this->gender == other.gender && this->era == other.era && 
 		    this->order == other.order && this->species == other.species && this->food == other.food);
+}
+
+bool Dinosaurs::operator!=(const Dinosaurs& other)const
+{
+	return !((*this) == other);
 }
 
 std::string Dinosaurs::getName()const
@@ -52,23 +45,23 @@ std::string Dinosaurs::getFood()const
 	return this->food;
 }
 
-std::ostream& operator<<(std::ostream& out, const Dinosaurs& other)
+std::ostream& operator<<(std::ostream& out, const Dinosaurs& other)//Извеждане на информация за дадена клетка.
 {
 	assert(isCorrect::isCorrectAnimal(other));
-	//Проверява дали е коректно зададено животното, т.е. дали е с правилно име, пол, ера, разред, вид и храна
-	//Ако е правилно, то извежда информация на 
+	/*Проверява дали е коректно зададено животното, т.е. дали е с правилно име, пол, ера, разред, вид и храна
+	  Ако е правилно, то извежда информация за него. */
 	out << other.name << " " << other.gender << " " << other.era
 		<< " " << other.order << " " << other.species << " " << other.food ;
 	return out;
 }
 
-void Dinosaurs::createAnimal(std::istream& in)
+void Dinosaurs::createAnimal(std::istream& in)//Създаване на динозавър по име, пол, ера и разред
 {
 	std::string name;
 	do {
 		std::cout << "Name:";
 		std::getline(in, name);
-	} while (!isCorrect::isCorrectName(name));//1 име, започващо с главна латинска буква, последвано от малки латински букви
+	} while (!isCorrect::isCorrectName(name));//Едно име, започващо с главна латинска буква, последвано от малки латински букви
 
 	std::string gender;
 	do {
@@ -108,7 +101,7 @@ void Dinosaurs::createAnimal(std::istream& in)
 			this->food = "meat";
 			std::cout << "food:meat\n";
 		}
-		else if (this->order == "flying")//Ако е летящо, то видът му е Птицозавър, а храната - месо
+		else if (this->order == "flying")//Ако е летящо, то видът му е Птицезавър, а храната - месо
 		{
 			this->species = "Pterosaur";
 			std::cout << "species:Pterosaur\n";
@@ -125,41 +118,44 @@ void Dinosaurs::createAnimal(std::istream& in)
 	}
 }
 
-void Dinosaurs::write(std::ofstream& out)//Записване в бинарен файл
+void Dinosaurs::write(std::ofstream& out)//Записване на информация за динозаври в бинарен файл
 {
-	/*Понеже всички член данни от класа Динозаври са стрингове, то начинът по който записваме е еднакъв, т.е.
+	/*Понеже всички член данни от класа Динозаври са стрингове, то начинът, по който записваме, е еднакъв, т.е.
 	1)В новосъздадена променлива запазваме размера на стринга.
 	2)Записваме във файла размера.
-	3)Записваме информацията от самия стринг.
-	*/
+	3)Записваме информацията от самия стринг.*/
 	int nameSize = this->name.size();
 	out.write((char*)(&nameSize), sizeof(nameSize));
 	out.write(this->name.c_str(), sizeof(char) * nameSize);
+
 	int genderSize = this->gender.size();
 	out.write((char*)(&genderSize), sizeof(genderSize));
 	out.write(this->gender.c_str(), sizeof(char) * genderSize);
+
 	int eraSize = this->era.size();
 	out.write((char*)(&eraSize), sizeof(eraSize));
 	out.write(this->era.c_str(), sizeof(char) * eraSize);
+
 	int orderSize = this->order.size();
 	out.write((char*)(&orderSize), sizeof(orderSize));
 	out.write(this->order.c_str(), sizeof(char) * orderSize);
+
 	int speciesSize = this->species.size();
 	out.write((char*)(&speciesSize), sizeof(speciesSize));
 	out.write(this->species.c_str(), sizeof(char) * speciesSize);
+
 	int foodSize = this->food.size();
 	out.write((char*)(&foodSize), sizeof(foodSize));
 	out.write(this->food.c_str(), sizeof(char) * foodSize);
 }
 
-void Dinosaurs::read(std::ifstream& in)//Четене от бинарен файл
+void Dinosaurs::read(std::ifstream& in)//Четене на информация за динозаври от бинарен файл
 {
 	/*Понеже всички член данни от класа Динозаври са стрингове, то начинът по който четем е еднакъв, т.е.
 	1)Прочитаме дължината на стринга.
 	2)Заделяме динамично памет, като имаме предвид да има място и за затапващия символ.
 	3)Присвояваме стойността на динамично заделената променлива на стринга.
-	4)Освобождаваме заделената памет.
-	*/
+	4)Освобождаваме заделената памет.*/
 	int nameSize;
 	in.read((char*)(&nameSize), sizeof(nameSize));
 	char* name = new char[nameSize + 1];
@@ -167,6 +163,7 @@ void Dinosaurs::read(std::ifstream& in)//Четене от бинарен файл
 	name[nameSize] = '\0';
 	this->name = name;
 	delete[] name;
+
 	int genderSize;
 	in.read((char*)(&genderSize), sizeof(genderSize));
 	char* gender = new char[genderSize + 1];
@@ -174,6 +171,7 @@ void Dinosaurs::read(std::ifstream& in)//Четене от бинарен файл
 	gender[genderSize] = '\0';
 	this->gender = gender;
 	delete[] gender;
+
 	int eraSize;
 	in.read((char*)(&eraSize), sizeof(eraSize));
 	char* era = new char[eraSize + 1];
@@ -181,6 +179,7 @@ void Dinosaurs::read(std::ifstream& in)//Четене от бинарен файл
 	era[eraSize] = '\0';
 	this->era = era;
 	delete[]era;
+
 	int orderSize;
 	in.read((char*)(&orderSize), sizeof(orderSize));
 	char* order = new char[orderSize + 1];
@@ -188,6 +187,7 @@ void Dinosaurs::read(std::ifstream& in)//Четене от бинарен файл
 	order[orderSize] = '\0';
 	this->order = order;
 	delete[] order;
+
 	int speciesSize;
 	in.read((char*)(&speciesSize), sizeof(speciesSize));
 	char* species = new char[speciesSize + 1];
@@ -195,6 +195,7 @@ void Dinosaurs::read(std::ifstream& in)//Четене от бинарен файл
 	species[speciesSize] = '\0';
 	this->species = species;
 	delete[] species;
+
 	int foodSize;
 	in.read((char*)(&foodSize), sizeof(foodSize));
 	char* food = new char[foodSize + 1];

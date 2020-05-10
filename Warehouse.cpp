@@ -1,5 +1,9 @@
-#include"Warehouse.h"
 #include<iostream>
+#include<string>
+#include<fstream>
+#include<cassert>
+#include"Warehouse.h"
+#include"isCorrect.h"
 
 Warehouse::Warehouse(int quantityGrass, int quantityMeat, int quantityFish)
 {
@@ -8,17 +12,17 @@ Warehouse::Warehouse(int quantityGrass, int quantityMeat, int quantityFish)
 	this->quantityFish = quantityFish;
 }
 
-int Warehouse::getQuantityGrass()
+int Warehouse::getQuantityGrass() const
 {
 	return this->quantityGrass;
 }
 
-int Warehouse::getQuantityMeat()
+int Warehouse::getQuantityMeat() const
 {
 	return this->quantityMeat;
 }
 
-int Warehouse::getQuantityFish()
+int Warehouse::getQuantityFish() const
 {
 	return this->quantityFish;
 }
@@ -38,7 +42,7 @@ void Warehouse::setQuantityFish(int quantityFish)
 	this->quantityFish = quantityFish;
 }
 
-void Warehouse::loadWarehouseWithGrass()
+void Warehouse::loadWarehouseWithGrass()//Зареждане на склада с трева
 {
 	int loadGrass;
 	std::cout << "What quantity grass do you want to load?\n->";
@@ -46,7 +50,7 @@ void Warehouse::loadWarehouseWithGrass()
 	this->quantityGrass += loadGrass;
 }
 
-void Warehouse::loadWarehouseWithMeat()
+void Warehouse::loadWarehouseWithMeat()//Зареждане на склада с месо
 {
 	int loadMeat;
 	std::cout << "What quantity meat do you want to load?\n->";
@@ -54,7 +58,7 @@ void Warehouse::loadWarehouseWithMeat()
 	this->quantityMeat += loadMeat;
 }
 
-void Warehouse::loadWarehouseWithFish()
+void Warehouse::loadWarehouseWithFish()//Зареждане на склада с риба
 {
 	int loadFish;
 	std::cout << "What quantity fish do you want to load?\n->";
@@ -62,7 +66,7 @@ void Warehouse::loadWarehouseWithFish()
 	this->quantityFish += loadFish;
 }
 
-void Warehouse::loadWarehouse()
+void Warehouse::loadWarehouse()//Зареждане на склада с трева, месо и риба
 {
 	(*this).loadWarehouseWithGrass();
 	(*this).loadWarehouseWithMeat();
@@ -71,18 +75,19 @@ void Warehouse::loadWarehouse()
 
 std::ostream& operator<<(std::ostream& out, const Warehouse& other)
 {
+	assert(isCorrect::isCorrectQuantityInWarehouse(other));
 	out << other.quantityGrass << " " << other.quantityMeat << " " << other.quantityFish << '\n';
 	return out;
 }
 
-void Warehouse::write(std::ofstream& out)
+void Warehouse::write(std::ofstream& out)//Записване на информация за склада в бинарен файл
 {
 	out.write((char*)(&this->quantityGrass), sizeof(int));
 	out.write((char*)(&this->quantityMeat), sizeof(int));
 	out.write((char*)(&this->quantityFish), sizeof(int));
 }
 
-void Warehouse::read(std::ifstream& in)
+void Warehouse::read(std::ifstream& in)//Четене на информация за склада от бинарен файл
 {
 	in.read((char*)(&this->quantityGrass), sizeof(this->quantityGrass));
 	in.read((char*)(&this->quantityMeat), sizeof(this->quantityMeat));

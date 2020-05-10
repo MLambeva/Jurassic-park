@@ -1,7 +1,5 @@
 #ifndef WAREHOUSE_H
 #define WAREHOUSE_H
-#include<string>
-#include<fstream>
 
 class Warehouse
 {
@@ -9,26 +7,28 @@ private:
 	int quantityGrass;
 	int quantityMeat;
 	int quantityFish;
-	
 public:
 	Warehouse() = default;
 	Warehouse(int quantityGrass, int quantityMeat, int quantityFish);
-	int getQuantityGrass();
-	int getQuantityMeat();
-	int getQuantityFish();
+
+	int getQuantityGrass() const;
+	int getQuantityMeat() const;
+	int getQuantityFish() const;
+
 	void setQuantityGrass(int quantityGrass);
 	void setQuantityMeat(int quantityMeat);
 	void setQuantityFish(int quantityFish);
 
-	void loadWarehouseWithGrass();
-	void loadWarehouseWithMeat();
-	void loadWarehouseWithFish();
-	void loadWarehouse();
+	void loadWarehouseWithGrass();//Зареждане на склада с трева
+	void loadWarehouseWithMeat();//Зареждане на склада с месо
+	void loadWarehouseWithFish();//Зареждане на склада с риба
+
+	void loadWarehouse();//Зареждане на склада с трева, месо и риба
 
 	friend std::ostream& operator<<(std::ostream& out, const Warehouse& other);
 
-	void write(std::ofstream& out);
-	void read(std::ifstream& in);
+	void write(std::ofstream& out);//Записване на информация за склада в бинарен файл
+	void read(std::ifstream& in);//Четене на информация за склада от бинарен файл
 };
 
 

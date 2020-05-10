@@ -1,3 +1,5 @@
+#include<iostream>
+#include<fstream>
 #include"Dinosaurs.h"
 #include"Cage.h"
 #include"isCorrect.h"
@@ -33,8 +35,9 @@ void readFromBin(std::vector<Cage>& c, Warehouse& w)
 	inputFile.seekg(0, std::ios::beg);
 	while (inputFile.tellg() != len)
 	{
-		Cage newCage;
+		Cage newCage; 
 		newCage.read(inputFile);
+		if (newCage.getAnimals().size() != 0)
 		c.push_back(newCage);
 	}
 	w.read(inputFile);
@@ -42,23 +45,54 @@ void readFromBin(std::vector<Cage>& c, Warehouse& w)
 	inputFile.close();
 }
 
+bool isEmpty()
+{
+	std::ifstream inputFile("JurassicPark.bin", std::ios::in | std::ios::binary | std::ios::ate);
+	std::streampos len = inputFile.tellg();
+	if (!inputFile.is_open() || len == 0) return true;
+	else return false;
+}
+
 int main()
 {
-	Warehouse warehouse(300, 300, 300);
-	//Cage first("small", "dry", 0);
-	//Cage second("medium", "water", 0);
-	//Cage third("large", "air", 0);
-	//std::vector<Cage> cages1 = { first, second, third};
+	if (isEmpty())
+	{
+		/*Зоопаркът започва с няколко клетки без животни в тях, 
+		затова ако все още няма съществуващ файл, или той е празен,
+		записваме информация за произволни клетки.*/
+		Warehouse startWarehouse(300, 300, 300);
+		Cage first("small", "dry", 0);
+		Cage second("medium", "water", 0);
+		Cage third("large", "air", 0);
+		std::vector<Cage>startCages = { first, second, third };
+		storeInBin(startCages, startWarehouse);
+	}
+
+	Warehouse warehouse;
 	std::vector<Cage> cages = { };
-	//storeInBin(cages1, warehouse);
-	readFromBin(cages, warehouse);
-	
-	std::vector<size_t> saveRightCage = { };
 	std::vector<Dinosaurs> dinosaurs = { };
-	std::vector<Employee> staff = { };
+    std::vector<Employee> staff = { };
+
+	std::vector<size_t> saveRightCage = { };//Запазваме номер на клетка, в която може да бъде настанен динозавъра.
+	
 	Dinosaurs saverDino;
 	Cage saverCage;
 	size_t action;
+
+	readFromBin(cages, warehouse);
+	Dinosaurs helper;
+
+	for(size_t i = 0; i < cages.size(); i++)
+	{
+		for (size_t j = 0; j < cages[i].getAnimals().size(); j++)
+		{
+			if (cages[i].getAnimals()[j] != helper)
+			{
+				dinosaurs.push_back(cages[i].getAnimals()[j]);
+			}
+		}
+	}
+
 	do
 	{
 		saveRightCage.clear();
@@ -170,7 +204,7 @@ int main()
 					{
 						if (dinosaurs[k - 1] == cages[i].getAnimals()[j])
 						{
-							cages[i].removeAnimalFromCage(j + 1); break;
+							cages[i].removeAnimalAndStaffFromCage(j + 1); break;
 						}
 					}
 				}
@@ -259,9 +293,14 @@ int main()
 		{
 			std::cout << "Cage:" << i + 1 << "--->" << cages[i];
 		}
+		std::cout << "Staff in Jurassic park:\n";
+		for (size_t i = 0; i < staff.size(); i++)
+		{
+			std::cout<< staff[i] << '\n';
+		}
 		std::cout << "\nWarehouse: " << warehouse;
 		storeInBin(cages, warehouse);
 	}
-	
+
 	return 0;
 }
