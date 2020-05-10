@@ -2,7 +2,6 @@
 #include<cassert>
 #include<fstream>
 #include"Cage.h"
-#include"Dinosaurs.h"
 #include"isCorrect.h"
 
 
@@ -121,7 +120,7 @@ std::ostream& operator << (std::ostream& out, const Cage& other)
 	{
 		out << "Animal " << i + 1 << ")" << other.animals[i];
 	}
-	std::cout << '\n';
+	std::cout << "\n============================================================\n";
 
 	return out;
 }

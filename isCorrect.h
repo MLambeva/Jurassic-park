@@ -43,9 +43,6 @@ public:
 	static bool isCorrectData(size_t number, std::vector<size_t>helper);
 	//Проверява по дадено число, дали това число се среща в масива от числа.
 
-	static bool isCorrectStaffName(std::string name);
-	//Проверява дали коректно са въведени имената на хората от персонала.
-
 	static bool isCorrectQuantityInWarehouse(const Warehouse& other);
 	//Проверява дали е коректно количеството храна в склада.
 };

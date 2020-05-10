@@ -136,46 +136,6 @@ bool isCorrect::isCorrectData(size_t number, std::vector<size_t>helper)
 	return flag;
 }
 
-bool isCorrect::isCorrectStaffName(std::string name)//Проверява дали коректно са въведени имената на хората от персонала.
-{
-	//2 имена, започващи с главни латински букви, последвани от малки латински букви и разделени с интервал
-	size_t index;//Запазва позицията на интервала.
-	size_t count = 0;//Брояч на интервалите в стринга.
-	bool flag1 = true;//Запазваме състоянието на името до интервала.
-	for (size_t i = 0; i < name.size(); i++)
-	{
-		if (name[i] == ' ')
-		{
-			count++;//Брой интервали в стринга. Трябва да има 1 интервал. 
-			index = i;//Запазва позицията на интервала.
-		}
-	}
-	//Проверява дали първата буква на стринга и буквата след интервала са главни латински букви.
-	if (count == 1 && name[0] >= 'A' && name[0] <= 'Z' && name[index + 1] >= 'A' && name[index + 1] <= 'Z')
-	{
-		for (size_t i = 1; i < index; i++)
-		{
-			if (!isLetter(name[i]))//Ако буквите от позиция 1(т.е втората буква) до интервала не са малки латински, значи името е грешно.
-			{
-				flag1 = false;//Грешно име, няма смисъл да проверяваме нататък.
-			}
-		}
-		if (flag1 == true)//Ако е вярно, проверяваме стринга след интервала.
-		{
-			for (size_t i = index + 2; i < name.size(); i++)
-			{
-				if (!isLetter(name[i]))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-	return false;
-}
-
 bool isCorrect::isCorrectQuantityInWarehouse(const Warehouse& other)
 {
 	//Проверява дали е коректно количеството храна в склада.
