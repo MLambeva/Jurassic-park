@@ -4,12 +4,11 @@
 class Warehouse
 {
 private:
-	int quantityGrass;
-	int quantityMeat;
-	int quantityFish;
+	int quantityGrass = 300;
+	int quantityMeat = 300;
+	int quantityFish = 300;
 public:
 	Warehouse() = default;
-	Warehouse(int quantityGrass, int quantityMeat, int quantityFish);
 
 	int getQuantityGrass() const;
 	int getQuantityMeat() const;

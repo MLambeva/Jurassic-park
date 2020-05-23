@@ -3,14 +3,8 @@
 #include<fstream>
 #include<cassert>
 #include"Warehouse.h"
-#include"isCorrect.h"
+#include"HelperFunctions.h"
 
-Warehouse::Warehouse(int quantityGrass, int quantityMeat, int quantityFish)
-{
-	this->quantityGrass = quantityGrass;
-	this->quantityMeat = quantityMeat;
-	this->quantityFish = quantityFish;
-}
 
 int Warehouse::getQuantityGrass() const
 {
@@ -75,8 +69,8 @@ void Warehouse::loadWarehouse()//«ареждане на склада с трева, месо и риба
 
 std::ostream& operator<<(std::ostream& out, const Warehouse& other)
 {
-	assert(isCorrect::isCorrectQuantityInWarehouse(other));
-	out << other.quantityGrass << " " << other.quantityMeat << " " << other.quantityFish << '\n';
+	assert(HelperFunctions::isCorrectQuantityInWarehouse(other));
+	out << other.quantityGrass << "kg grass, " << other.quantityMeat << "kg meat, " << other.quantityFish << "kg fish.";
 	return out;
 }
 

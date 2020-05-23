@@ -2,16 +2,14 @@
 #include<cassert>
 #include<fstream>
 #include"Cage.h"
-#include"isCorrect.h"
+#include"HelperFunctions.h"
 
-
-Cage::Cage(const std::string& size, const std::string& climate, int countEmp)
+Cage::Cage(const std::string& size, const std::string& climate)
 {
-	assert(isCorrect::isCorrectSize(size));
+	assert(HelperFunctions::isCorrectSize(size));
 	this->size = size;
-	assert(isCorrect::isCorrectClimate(climate));
+	assert(HelperFunctions::isCorrectClimate(climate));
 	this->climate = climate;
-	this->countEmp = countEmp;
 }
 
 std::string Cage::getSize() const
@@ -29,7 +27,7 @@ size_t Cage::getCountEmp() const
 	return this->countEmp;
 }
 
-std::vector<Dinosaurs> Cage::getAnimals() const
+std::vector<Dinosaur> Cage::getAnimals() const
 {
 	return this->animals;
 }
@@ -39,7 +37,7 @@ std::string Cage::getEra() const
 	return this->era;
 }
 
-void Cage::setAnimal(const Dinosaurs& other)
+void Cage::setAnimal(const Dinosaur& other)
 {
 	this->animals.push_back(other);
 }
@@ -49,22 +47,22 @@ void Cage::setCountEmp(const size_t& countEmp)
 	this->countEmp = countEmp;
 }
 
-void Cage::buildCageForExistedAnimal(std::istream& in, const Dinosaurs& animal)
+void Cage::buildCageForExistedAnimal(std::istream& in, const Dinosaur& animal)
 {//Създаване на клетка в зависимост от вида на животното, което ще е вътре
 	std::string size;
 	do {
 		std::cout << "Size(small/medium/large):";
 		std::getline(in, size);
-	} while (!isCorrect::isCorrectSize(size));
+	} while (!HelperFunctions::isCorrectSize(size));
 
 	std::string climate;
 	do {
 		std::cout << "Climate(dry/air/water):";
 		std::getline(in, climate);
-	} while (!(isCorrect::isCorrectClimate(climate) && isCorrect::isCorrectClimateAnimal(climate, animal)));
-	//Ако климатът е сухоземен, то животното е или Бронтозавър, или Тиранозавър
-    //Ако климатът е воден, то животното е Плезиозавър
-	//Ако кливатът е въздушен, то животното е птицезавър
+	} while (!(HelperFunctions::isCorrectClimate(climate) && HelperFunctions::isCorrectClimateAnimal(climate, animal)));
+	//Ако животното е или Бронтозавър, или Тиранозавър, то климатът трябва да е сухоземен.
+    //Ако животното е Плезиозавър, то климатът трябва да е воден.
+	//Ако животното е Птицезавър, то климатът трябва да е въздушен.
 	if (in)
 	{
 		this->size = size;
@@ -81,13 +79,13 @@ void Cage::buildCage(std::istream& in)//Създаване на клетка, в която няма животн
 	do {
 		std::cout << "Size(small/medium/large):";
 		std::getline(in, size);
-	} while (!isCorrect::isCorrectSize(size));
+	} while (!HelperFunctions::isCorrectSize(size));
 	
 	std::string climate;
 	do {
 		std::cout << "Climate(dry/air/water):";
 		std::getline(in, climate);
-	} while (!isCorrect::isCorrectClimate(climate));
+	} while (!HelperFunctions::isCorrectClimate(climate));
 	
 	if (in)
 	{
@@ -95,7 +93,7 @@ void Cage::buildCage(std::istream& in)//Създаване на клетка, в която няма животн
 		this->climate = climate;
 		this->countEmp = 0;
 		std::cout << "You build new cage " << size << " size and " << climate 
-			      << " climate with " << this->countEmp << "employee inside!\n";
+			      << " climate with " << this->countEmp << " employee inside!\n";
 	}
 }
 
@@ -118,7 +116,7 @@ std::ostream& operator << (std::ostream& out, const Cage& other)
 	out << "Size: " << other.size << "; Climate: " << other.climate << "; Employee:" << other.countEmp << " " << other.era << '\n';
 	for (size_t i = 0; i < other.animals.size(); i++)
 	{
-		out << "Animal " << i + 1 << ")" << other.animals[i];
+		out << "Animal " << i + 1 << ")" << other.animals[i] << '\n';
 	}
 	std::cout << "\n============================================================\n";
 
@@ -149,7 +147,7 @@ void Cage::write(std::ofstream& out)//Записване на информация за клетка в бинаре
 	out.write(era.c_str(), sizeof(char) * eraSize);
 
 	/*Член-данната "animals" е вектор от животни, затова първо записваме броя животни, а след това чрез цикъл записваме и данните
-	за самите животни, като си осигуряваме, че ако няма животни, то няма да се запише никаква информация за тях.*/
+	за самите животни,чрез функцията "write" от "class Dinosaur", като си осигуряваме, че ако няма животни, то няма да се запише никаква информация за тях.*/
 	int animalsSize = this->animals.size();
 	out.write((char*)(&animalsSize), sizeof(animalsSize));
 	for (int i = 0; i < animalsSize; i++)
@@ -193,12 +191,12 @@ void Cage::read(std::ifstream& in)//Четене на информация за клетка от бинарен фа
 	delete[] era;
 
 	/*Член-данната "animals" е вектор от животни, затова първо прочитаме броя животни, а след това чрез цикъл четем и данните
-	за самите животни чрез функцията "read" от "class Dinosaurs" като дабавяме прочетеното във вектора "animals".*/
+	за самите животни чрез функцията "read" от "class Dinosaur" като дабавяме прочетеното във вектора "animals".*/
 	int animalsSize;
 	in.read((char*)(&animalsSize), sizeof(animalsSize));
 	for (int i = 0; i < animalsSize; i++)
 	{
-		Dinosaurs reader;
+		Dinosaur reader;
 		reader.read(in);
 		this->animals.push_back(reader);
 	}

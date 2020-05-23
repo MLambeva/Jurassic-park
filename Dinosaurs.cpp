@@ -1,53 +1,53 @@
 #include<iostream>
 #include<fstream>
 #include<cassert>
-#include"Dinosaurs.h"
-#include"isCorrect.h"
+#include"Dinosaur.h"
+#include"HelperFunctions.h"
 
-bool Dinosaurs::operator==(const Dinosaurs& other)const
+bool Dinosaur::operator==(const Dinosaur& other)const
 {
 	return (this->name == other.name && this->gender == other.gender && this->era == other.era && 
 		    this->order == other.order && this->species == other.species && this->food == other.food);
 }
 
-bool Dinosaurs::operator!=(const Dinosaurs& other)const
+bool Dinosaur::operator!=(const Dinosaur& other)const
 {
 	return !((*this) == other);
 }
 
-std::string Dinosaurs::getName()const
+std::string Dinosaur::getName()const
 {
 	return this->name;
 }
 
-std::string Dinosaurs::getGender()const
+std::string Dinosaur::getGender()const
 {
 	return this->gender;
 }
 
-std::string Dinosaurs::getEra()const
+std::string Dinosaur::getEra()const
 {
 	return this->era;
 }
 
-std::string Dinosaurs::getOrder()const
+std::string Dinosaur::getOrder()const
 {
 	return this->order;
 }
 
-std::string Dinosaurs::getSpecies()const
+std::string Dinosaur::getSpecies()const
 {
 	return this->species;
 }
 
-std::string Dinosaurs::getFood()const
+std::string Dinosaur::getFood()const
 {
 	return this->food;
 }
 
-std::ostream& operator<<(std::ostream& out, const Dinosaurs& other)//Извеждане на информация за дадена клетка.
+std::ostream& operator<<(std::ostream& out, const Dinosaur& other)//Извеждане на информация за дадена клетка.
 {
-	assert(isCorrect::isCorrectAnimal(other));
+	assert(HelperFunctions::isCorrectAnimal(other));
 	/*Проверява дали е коректно зададено животното, т.е. дали е с правилно име, пол, ера, разред, вид и храна
 	  Ако е правилно, то извежда информация за него. */
 	out << other.name << " " << other.gender << " " << other.era
@@ -55,31 +55,31 @@ std::ostream& operator<<(std::ostream& out, const Dinosaurs& other)//Извеждане н
 	return out;
 }
 
-void Dinosaurs::createAnimal(std::istream& in)//Създаване на динозавър по име, пол, ера и разред
+void Dinosaur::createAnimal(std::istream& in)//Създаване на динозавър по име, пол, ера и разред
 {
 	std::string name;
 	do {
 		std::cout << "Name:";
 		std::getline(in, name);
-	} while (!isCorrect::isCorrectName(name));//Едно име, започващо с главна латинска буква, последвано от малки латински букви
+	} while (!HelperFunctions::isCorrectName(name));//Едно име, започващо с главна латинска буква, последвано от малки латински букви
 
 	std::string gender;
 	do {
 		std::cout << "Gender(female/male):";
 		std::getline(in, gender);
-	} while (!isCorrect::isCorrectGender(gender));//female/male
+	} while (!HelperFunctions::isCorrectGender(gender));//female/male
 
 	std::string era;
 	do {
 		std::cout << "Era(Triassic/Cretaceous/Jura):";
 		std::getline(in, era);
-	} while (!isCorrect::isCorrectEra(era));//Triassic/Cretaceous/Jura !Първа буква - главна!
+	} while (!HelperFunctions::isCorrectEra(era));//Triassic/Cretaceous/Jura !Първа буква - главна!
 
 	std::string order;
 	do {
 		std::cout << "Order(herbivorous/carnivorous/flying/aqueous):";
 		std::getline(in, order);
-	} while (!isCorrect::isCorrectOrder(order));//herbivorous/carnivorous/flying/aqueous
+	} while (!HelperFunctions::isCorrectOrder(order));//herbivorous/carnivorous/flying/aqueous
 
 	if (in)
 	{
@@ -118,7 +118,7 @@ void Dinosaurs::createAnimal(std::istream& in)//Създаване на динозавър по име, п
 	}
 }
 
-void Dinosaurs::write(std::ofstream& out)//Записване на информация за динозаври в бинарен файл
+void Dinosaur::write(std::ofstream& out)//Записване на информация за динозаври в бинарен файл
 {
 	/*Понеже всички член данни от класа Динозаври са стрингове, то начинът, по който записваме, е еднакъв, т.е.
 	1)В новосъздадена променлива запазваме размера на стринга.
@@ -149,7 +149,7 @@ void Dinosaurs::write(std::ofstream& out)//Записване на информация за динозаври 
 	out.write(this->food.c_str(), sizeof(char) * foodSize);
 }
 
-void Dinosaurs::read(std::ifstream& in)//Четене на информация за динозаври от бинарен файл
+void Dinosaur::read(std::ifstream& in)//Четене на информация за динозаври от бинарен файл
 {
 	/*Понеже всички член данни от класа Динозаври са стрингове, то начинът по който четем е еднакъв, т.е.
 	1)Прочитаме дължината на стринга.
