@@ -3,6 +3,7 @@
 #include<vector>
 #include<fstream>
 #include<iostream>
+#include<ctime>
 #include"Cage.h"
 #include"Dinosaur.h"
 #include"HelperFunctions.h"

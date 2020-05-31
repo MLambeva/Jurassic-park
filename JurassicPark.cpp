@@ -62,7 +62,7 @@ void JurassicPark::print() const
 	{
 		std::cout << "Cage:" << i + 1 << "--->" << this->cages[i];
 	}
-	std::cout << "\nWarehouse: " << this->warehouse;
+	std::cout << "Warehouse: " << this->warehouse << '\n';
 }
 
 void JurassicPark::loadCages()//При несъществуване на файл или при неналичие на клетки,  се записват в бинарен файл три произволно измислени клетки. 
@@ -71,12 +71,16 @@ void JurassicPark::loadCages()//При несъществуване на файл или при неналичие на 
 	{
 		/*Зоопаркът започва с няколко клетки без животни в тях,
 		затова ако все още няма съществуващ файл, или той е празен,
-		записваме информация за произволни клетки.*/
+		записваме информация за произволно генерирани клетки.*/
+		std::vector<Cage>startCages;
 		Warehouse startWarehouse;
-		Cage first("small", "dry");
-		Cage second("medium", "water");
-		Cage third("large", "air");
-		std::vector<Cage>startCages = { first, second, third };
+		std::srand(std::time(NULL));
+		std::vector<std::string> sizes = { "small", "medium", "large" };
+		std::vector<std::string> climate = { "dry", "water", "air" };
+		for (size_t i = 0; i < 3; i++)
+		{
+			startCages.push_back(Cage(sizes[std::rand() % 3], climate[std::rand() % 3]));
+		}
 		JurassicPark start(startCages, startWarehouse);
 		start.storeInBin();
 	}
@@ -84,7 +88,7 @@ void JurassicPark::loadCages()//При несъществуване на файл или при неналичие на 
 
 void JurassicPark::loadPark()
 {
-	loadCages();////При несъществуване на файл или при неналичие на клетки,  се записват в бинарен файл три произволно измислени клетки. 
+	loadCages();//При несъществуване на файл или при неналичие на клетки,  се записват в бинарен файл три произволно измислени клетки. 
 
 	std::vector<size_t> saveRightCage = { };//Запазваме номер на клетка, в която може да бъде настанен динозавъра.
 
